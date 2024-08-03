@@ -1,0 +1,45 @@
+Lab: CSRF where token validation depends on request method
+
+-Vulnerable Parameter: Email change functionality  
+-Goal: Exploit CSRF to change the email address  
+-Credentials: wiener:peter
+
+Analysis:
+For a CSRF attack to be possible:
+-Relevant action:** Change a user's email
+-Cookie-based session handling: Session cookie
+-No unpredictable request parameter: The request method can be changed to GET, which doesn't require a CSRF Token.
+
+Steps:
+1.Open Burp Suite.
+2.Log in with the given credentials, then turn on the intercept in Burp Suite.
+3.Change the email address to `test@test.ca`, then click update the email while intercepting this request.
+4.Send the request to **Repeater** and turn the intercept off.
+5.Right-click on the request and select "Change request method" to "GET".
+6.Press send, then you will get `HTTP/1.1 302 Found`. If you follow the redirection, you will get `HTTP/1.1 200 OK`. If you check the email in the search bar, you will find it changed in the response.
+7.Go back to the request before following the redirection and remove the CSRF Token because it's a GET request, not POST. Press send and see if you get a 302. Yes, we got it. You can test further by changing the email and pressing send to see if you get a 302 and follow the redirection to see if you get 200 OK.
+8.The main idea here is that the application checks the CSRF token for POST requests but not for GET requests.
+
+Solution:
+1.Take a copy of our GET request and use ChatGPT to generate the CSRF PoC because Burp Suite Community Edition does not have this feature.
+2.The generated CSRF PoC will look like this:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSRF Attack</title>
+</head>
+<body>
+    <h1>CSRF Attack to Change Email</h1>
+    <img src="https://0acf009c0302a6e8807a441000f5007a.web-security-academy.net/my-account/change-email?email=test5%40test.ca" alt="CSRF Attack" style="display:none;">
+</body>
+</html>
+
+The `img` tag with the `src` attribute pointing to the URL with the GET request will automatically trigger the request when the HTML page is loaded. The `style="display:none;"` hides the image, making the attack less noticeable to the user.
+
+ Final Steps:
+1.Submit the solution URL: Once you confirm that the email has been changed, submit the URL of the exploit page to the lab.
+2.Verify success: The lab should confirm that the email address has been successfully changed, indicating that the CSRF attack was successful.
+
+See you in the next lab, guys!
